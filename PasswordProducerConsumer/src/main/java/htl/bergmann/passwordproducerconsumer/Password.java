@@ -9,6 +9,6 @@ public class Password {
     }
     
     public boolean check(String password) {
-        return this.password == password;
+        return this.password.equals(password);
     }
 }
