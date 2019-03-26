@@ -1,6 +1,7 @@
 package htl.bergmann.passwordproducerconsumer;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 /**
  *
@@ -8,29 +9,38 @@ import java.awt.Color;
  */
 public class ConsumerGUI extends javax.swing.JPanel {
 
-    /**
-     * Creates new form ConsumerGUI
-     */
-    public ConsumerGUI() {
+    private ArrayList<Password> passwords;
+    private PasswordConsumer passwordConsumer;
+    private PasswordGUI passwordGUI;
+
+    public ConsumerGUI(ArrayList<Password> passwords, PasswordGUI passwordGUI) {
         initComponents();
+        this.passwords = passwords;
+        this.passwordConsumer = new PasswordConsumer(passwords, this);
+        this.passwordGUI = passwordGUI;
+        new Thread(this.passwordConsumer).start();
+        setActive(false);
     }
-    
+
     public void setActive(boolean active) {
-        if(active) {
+        if (active) {
             lbActive.setBackground(Color.green);
         } else {
             lbActive.setBackground(Color.red);
         }
+        passwordGUI.updateQueue();
     }
-    
+
     public void setHash(String hash) {
         lbHash.setText(hash);
         lbPassword.setText("Working");
+        passwordGUI.updateQueue();
     }
-    
+
     public void setPassword(String password) {
         lbPassword.setText(password);
-        taHistory.append(lbHash.getText() + " -> " + password);
+        taHistory.append(lbHash.getText() + " -> " + password + "\n");
+        passwordGUI.updateQueue();
     }
 
     /**
@@ -64,6 +74,7 @@ public class ConsumerGUI extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 5.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
         add(lbHash, gridBagConstraints);
 
         lbPassword.setText("solution");
@@ -72,9 +83,11 @@ public class ConsumerGUI extends javax.swing.JPanel {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 5.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
         add(lbPassword, gridBagConstraints);
 
         taHistory.setColumns(20);
+        taHistory.setFont(new java.awt.Font("Courier New", 0, 13)); // NOI18N
         taHistory.setRows(5);
         jScrollPane1.setViewportView(taHistory);
 

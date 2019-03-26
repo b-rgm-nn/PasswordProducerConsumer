@@ -11,6 +11,7 @@ public class PasswordConsumer implements Runnable {
 
     private ArrayList<Password> passwords = new ArrayList<>();
     private static ArrayList<String> passwordList = new ArrayList<>();
+    private ConsumerGUI gui;
     
     static {
         try (BufferedReader br = new BufferedReader(new FileReader(new File("passwords.txt")))) {
@@ -19,12 +20,12 @@ public class PasswordConsumer implements Runnable {
                 passwordList.add(line);
             }
         } catch (Exception e) {
-
         }
     }
 
-    public PasswordConsumer(ArrayList<Password> passwords) {
+    public PasswordConsumer(ArrayList<Password> passwords, ConsumerGUI  gui) {
         this.passwords = passwords;
+        this.gui = gui;
     }
 
     @Override
@@ -34,11 +35,12 @@ public class PasswordConsumer implements Runnable {
             synchronized (passwords) {
                 if (passwords.size() > 0) {
                      password = passwords.remove(0);
-                     System.out.println("Pulling "  + password.getPassword());
+                     gui.setHash(password.getHash());
+                     gui.setActive(true);
                      passwords.notifyAll();
                 } else {
                     try {
-                        System.out.println("List empty");
+                        gui.setActive(false);
                         passwords.wait();
                     } catch (InterruptedException ex) {
                         Logger.getLogger(PasswordConsumer.class.getName()).log(Level.SEVERE, null, ex);
@@ -49,16 +51,14 @@ public class PasswordConsumer implements Runnable {
             boolean cracked = false;
             for (String string : passwordList) {
                 if (password.check(string)) {
-                    System.out.println(password.getPassword() + " -> " + string);
+                    gui.setPassword(string);
                     cracked = true;
                     break;
                 }
             }
             if (!cracked) {
-                System.out.println(password.getPassword() + " -> The password has not been cracked");
+                gui.setPassword("Failed");
             }
-
         }
     }
-
 }

@@ -7,10 +7,10 @@ import java.util.logging.Logger;
 import org.apache.commons.codec.digest.DigestUtils;
 
 public class Password {
-    private String password;
+    private String hash;
 
     public Password(String password) {
-        this.password = DigestUtils.sha256Hex(password);
+        this.hash = DigestUtils.sha256Hex(password);
     }
     
     public boolean check(String password) {
@@ -21,11 +21,11 @@ public class Password {
                 Logger.getLogger(Password.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return this.password.equals(DigestUtils.sha256Hex(password));
+        return this.hash.equals(DigestUtils.sha256Hex(password));
     }
 
-    public String getPassword() {
-        return password;
+    public String getHash() {
+        return hash;
     }
     
     
