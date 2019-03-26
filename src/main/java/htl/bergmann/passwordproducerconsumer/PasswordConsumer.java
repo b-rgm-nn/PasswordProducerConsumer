@@ -10,14 +10,9 @@ import java.util.logging.Logger;
 public class PasswordConsumer implements Runnable {
 
     private ArrayList<Password> passwords = new ArrayList<>();
-    private ArrayList<String> passwordList = new ArrayList<>();
-
-    public PasswordConsumer(ArrayList<Password> passwords) {
-        this.passwords = passwords;
-        loadPasswords();
-    }
-
-    public void loadPasswords() {
+    private static ArrayList<String> passwordList = new ArrayList<>();
+    
+    static {
         try (BufferedReader br = new BufferedReader(new FileReader(new File("passwords.txt")))) {
             String line = "";
             while ((line = br.readLine()) != null) {
@@ -28,6 +23,10 @@ public class PasswordConsumer implements Runnable {
         }
     }
 
+    public PasswordConsumer(ArrayList<Password> passwords) {
+        this.passwords = passwords;
+    }
+
     @Override
     public void run() {
         while (true) {
@@ -35,6 +34,7 @@ public class PasswordConsumer implements Runnable {
             synchronized (passwords) {
                 if (passwords.size() > 0) {
                      password = passwords.remove(0);
+                     passwords.notifyAll();
                 } else {
                     try {
                         passwords.wait();
