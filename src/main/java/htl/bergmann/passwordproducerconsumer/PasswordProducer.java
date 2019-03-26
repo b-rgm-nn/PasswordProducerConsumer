@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 public class PasswordProducer implements Runnable {
 
@@ -19,9 +20,13 @@ public class PasswordProducer implements Runnable {
     public void run() {
         Scanner sc = new Scanner(System.in);
         while(true) {
+            String str = JOptionPane.showInputDialog("Wähle ein Passwort");// sc.nextLine();
+            if(str == null) {
+                break;
+            }
             synchronized(passwords) {
                 if(passwords.size() < maxPasswords){
-                    passwords.add(new Password(sc.nextLine()));
+                    passwords.add(new Password(str));
                     passwords.notifyAll();
                 } else {
                     try {
