@@ -27,9 +27,11 @@ public class PasswordProducer implements Runnable {
             synchronized(passwords) {
                 if(passwords.size() < maxPasswords){
                     passwords.add(new Password(str));
+                    System.out.println("pushing " + str);
                     passwords.notifyAll();
                 } else {
                     try {
+                        System.out.println("password list full");
                         passwords.wait();
                     } catch (InterruptedException ex) {
                         Logger.getLogger(PasswordProducer.class.getName()).log(Level.SEVERE, null, ex);

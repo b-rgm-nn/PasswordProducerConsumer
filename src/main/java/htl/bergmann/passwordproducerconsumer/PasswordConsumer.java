@@ -34,9 +34,11 @@ public class PasswordConsumer implements Runnable {
             synchronized (passwords) {
                 if (passwords.size() > 0) {
                      password = passwords.remove(0);
+                     System.out.println("Pulling "  + password.getPassword());
                      passwords.notifyAll();
                 } else {
                     try {
+                        System.out.println("List empty");
                         passwords.wait();
                     } catch (InterruptedException ex) {
                         Logger.getLogger(PasswordConsumer.class.getName()).log(Level.SEVERE, null, ex);
